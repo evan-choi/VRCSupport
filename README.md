@@ -10,11 +10,12 @@ VRChat Unity Support Plugin
  
  ## Future
  - AudioClip FFT Visualizing Generator
- 
-[이모트 온오프 - 기본 사용법](https://youtu.be/BaVhYW7nIhE)
 
-[이모트 온오프 - 응용](https://youtu.be/K5sU_LXleOk)
+## How to
+- [이모트 온오프 - 기본 사용법](https://youtu.be/BaVhYW7nIhE)
 
-[이모트 온오프 - 월드 고정](https://youtu.be/HNALQ_shDlM)
+- [이모트 온오프 - 응용](https://youtu.be/K5sU_LXleOk)
 
-[애니메이션 블렌더 (애니메이션 합치기)](https://youtu.be/Wg-IQMFMlUo)
+- [이모트 온오프 - 월드 고정](https://youtu.be/HNALQ_shDlM)
+
+- [애니메이션 블렌더 (애니메이션 합치기)](https://youtu.be/Wg-IQMFMlUo)
