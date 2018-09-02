@@ -43,13 +43,17 @@ public class EmoteOnOff
             _sceneDirectory = Path.GetDirectoryName(TargetObject.scene.path);
             _avatar = GetRoot(TargetObject);
 
-            _targetParent = TargetObject.transform.parent.gameObject;
+            if (TargetObject.transform.parent != null)
+                _targetParent = TargetObject.transform.parent.gameObject;
+
             var position = TargetObject.transform.position;
 
             _containerOn = new GameObject(TargetObject.name + OnSuffix);
             _containerOff = new GameObject(TargetObject.name + OffSuffix);
 
-            _containerOn.SetParent(_targetParent);
+            if (_targetParent != null)
+                _containerOn.SetParent(_targetParent);
+
             _containerOff.SetParent(_containerOn);
             TargetObject.SetParent(_containerOff);
 
