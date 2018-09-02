@@ -63,13 +63,13 @@ public class VRCSupportWindow : EditorWindow
 
         using (this.BeginScope(Scope.Horizontal))
         {
-            EditorGUILayout.PrefixLabel("대상");
+            EditorGUILayout.PrefixLabel("Target");
             EmoteOnOff.TargetObject = EditorGUILayout.ObjectField(EmoteOnOff.TargetObject, typeof(GameObject), true) as GameObject;
         }
 
         using (this.BeginScope(Scope.Horizontal))
         {
-            EditorGUILayout.PrefixLabel("월드 고정");
+            EditorGUILayout.PrefixLabel("Fixed Joint (World)");
             EmoteOnOff.FixedJoint = EditorGUILayout.Toggle(EmoteOnOff.FixedJoint);
         }
 
