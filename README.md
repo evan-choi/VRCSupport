@@ -3,6 +3,14 @@ VRChat Unity Support Plugin
 
 **[VRChat - 5ちゃ](https://www.vrchat.net/home/user/usr_75ce294c-e79c-4568-b24e-c3184d520245)**
 
+## Feature
+ - Emote On/Off 구현 자동화
+ - AnimationClip 합치기
+ - Missing Animation 원클릭 제거
+ 
+ ## Future
+ - AudioClip FFT Visualizing Generator
+ 
 [이모트 온오프 - 기본 사용법](https://youtu.be/BaVhYW7nIhE)
 
 [이모트 온오프 - 응용](https://youtu.be/K5sU_LXleOk)
