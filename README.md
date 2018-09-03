@@ -11,6 +11,7 @@ VRChat Unity Support Plugin
  
 ## Future
  - AudioClip FFT Visualizing Generator
+ - Video 재생 구현 자동화
 
 ## How to
 
