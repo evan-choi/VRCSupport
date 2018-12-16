@@ -5,8 +5,9 @@ using UnityEngine;
 
 public class EmoteOnOff
 {
-    public const string OnSuffix = "_ON";
-    public const string OffSuffix = "_OFF";
+    public const string NameContainer = "CONTAINER";
+    public const string SuffixOn = "_TOGGLE";
+    public const string NameOff = "OFF";
 
     static readonly float frame = 1 / 60f;
 
@@ -23,12 +24,14 @@ public class EmoteOnOff
     public bool FixedJoint { get; set; }
 
     string _sceneDirectory;
+    string _assetDirectory;
 
     GameObject _avatar;
     GameObject _targetParent;
 
     GameObject _containerOn;
     GameObject _containerOff;
+    GameObject _container;
 
     public EmoteOnOff()
     {
@@ -41,6 +44,8 @@ public class EmoteOnOff
         try
         {
             _sceneDirectory = Path.GetDirectoryName(TargetObject.scene.path);
+            _assetDirectory = "Assets/VrcSupport/Animation";
+
             _avatar = GetRoot(TargetObject);
 
             if (TargetObject.transform.parent != null)
@@ -48,28 +53,30 @@ public class EmoteOnOff
 
             var position = TargetObject.transform.position;
 
-            _containerOn = new GameObject(TargetObject.name + OnSuffix);
-            _containerOff = new GameObject(TargetObject.name + OffSuffix);
+            _containerOn = new GameObject(TargetObject.name + SuffixOn);
+            _containerOff = new GameObject(NameOff);
+            _container = new GameObject(NameContainer);
+
+            _container.SetActive(false);
 
             if (_targetParent != null)
                 _containerOn.SetParent(_targetParent);
 
             _containerOff.SetParent(_containerOn);
-            TargetObject.SetParent(_containerOff);
+            _container.SetParent(_containerOff);
+            TargetObject.SetParent(_container);
 
             TargetObject.transform.position = Vector3.zero;
             _containerOn.transform.position = position;
 
-            TargetObject.SetActive(false);
-
-            CreateToggleAnimation();
+            CreateToggleAnimator();
             CreateToggleEmoteAnimation();
 
             if (FixedJoint)
                 CreateFixedJoint();
 
             AssetDatabase.Refresh();
-
+            
             return true;
         }
         catch (Exception e)
@@ -124,47 +131,16 @@ public class EmoteOnOff
             AnimationCurve.Linear(0, 0, frame, 0));
     }
 
-    void CreateToggleAnimation()
+    void CreateToggleAnimator()
     {
-        var containerOnAnim = new AnimationClip()
-        {
-            legacy = true,
-            wrapMode = WrapMode.Loop
-        };
+        var containerOnAnimator = _containerOn.AddComponent<Animator>();
+        var containerOffAnimator = _containerOff.AddComponent<Animator>();
 
-        var containerOffAnim = new AnimationClip()
-        {
-            legacy = true,
-            wrapMode = WrapMode.Loop
-        };
+        containerOnAnimator.enabled = false;
+        containerOffAnimator.enabled = false;
 
-        containerOnAnim.SetCurve(
-            AnimationUtility.CalculateTransformPath(
-                TargetObject.transform,
-                _containerOn.transform),
-            TargetObject.GetType(),
-            "m_IsActive",
-            AnimationCurve.Linear(0, 1, frame, 1));
-
-        containerOffAnim.SetCurve(
-            AnimationUtility.CalculateTransformPath(
-                TargetObject.transform,
-                _containerOff.transform),
-            TargetObject.GetType(),
-            "m_IsActive",
-            AnimationCurve.Linear(0, 0, frame, 0));
-
-        var onAnim = _containerOn.AddComponent<Animation>();
-        var offAnim = _containerOff.AddComponent<Animation>();
-
-        onAnim.enabled = false;
-        offAnim.enabled = false;
-
-        onAnim.clip = containerOnAnim;
-        offAnim.clip = containerOffAnim;
-
-        AssetDatabase.CreateAsset(containerOnAnim, _sceneDirectory + "/" + TargetObject.name + OnSuffix + ".anim");
-        AssetDatabase.CreateAsset(containerOffAnim, _sceneDirectory + "/" + TargetObject.name + OffSuffix + ".anim");
+        containerOnAnimator.runtimeAnimatorController = AssetDatabase.LoadAssetAtPath<RuntimeAnimatorController>(_assetDirectory + "/OnController.controller");
+        containerOffAnimator.runtimeAnimatorController = AssetDatabase.LoadAssetAtPath<RuntimeAnimatorController>(_assetDirectory + "/OffController.controller");
     }
 
     void CreateToggleEmoteAnimation()
@@ -172,21 +148,16 @@ public class EmoteOnOff
         var emoteOnAnim = OnClip ?? new AnimationClip();
         var emoteOffAnim = OffClip ?? new AnimationClip();
 
-        emoteOnAnim.SetCurve(
-            AnimationUtility.CalculateTransformPath(
-                _containerOn.transform, 
-                _avatar.transform),
-            typeof(Animation),
-            "m_Enabled",
-            AnimationCurve.Linear(0, 1, frame * 10, 1));
+        var onPath = AnimationUtility.CalculateTransformPath(_containerOn.transform, _avatar.transform);
+        var offPath = AnimationUtility.CalculateTransformPath(_containerOff.transform, _avatar.transform);
+        var curveEnable = AnimationCurve.Linear(0, 1, frame * 10, 1);
+        var curveDisable = AnimationCurve.Linear(0, 0, frame * 10, 0);
 
-        emoteOffAnim.SetCurve(
-            AnimationUtility.CalculateTransformPath(
-                _containerOff.transform, 
-                _avatar.transform),
-            typeof(Animation),
-            "m_Enabled",
-            AnimationCurve.Linear(0, 1, frame * 10, 1));
+        emoteOnAnim.SetCurve(onPath, typeof(Behaviour), "m_Enabled", curveEnable);
+        emoteOnAnim.SetCurve(offPath, typeof(Behaviour), "m_Enabled", curveDisable);
+
+        emoteOffAnim.SetCurve(onPath, typeof(Behaviour), "m_Enabled", curveDisable);
+        emoteOffAnim.SetCurve(offPath, typeof(Behaviour), "m_Enabled", curveEnable);
 
         if (OnClip == null)
             AssetDatabase.CreateAsset(emoteOnAnim, _sceneDirectory + "/" + OnName + ".anim");

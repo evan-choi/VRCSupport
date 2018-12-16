@@ -285,8 +285,8 @@ public class VRCSupportWindow : EditorWindow
 
         if (ready)
         {
-            string onClipName = EmoteOnOff.TargetObject.name + EmoteOnOff.OnSuffix;
-            string offClipName = EmoteOnOff.TargetObject.name + EmoteOnOff.OffSuffix;
+            string onClipName = EmoteOnOff.TargetObject.name + EmoteOnOff.SuffixOn;
+            string offClipName = EmoteOnOff.TargetObject.name + EmoteOnOff.NameOff;
 
             ready = (EmoteOnOff.OnClip != null || !onClipName.EqualsIgnoreCase(EmoteOnOff.OnName));
             ready &= (EmoteOnOff.OffClip != null || !onClipName.EqualsIgnoreCase(EmoteOnOff.OffName));
